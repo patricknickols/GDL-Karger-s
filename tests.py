@@ -28,10 +28,12 @@ def test_graph(graph, tries):
     min_partition = get_minimal_partition(graph)
     for _ in range(tries):
         karger_result = karger_dict(graph)
-        if len(karger_result) == get_cardinality_min_cut(small_graph):
+        if len(karger_result) == get_cardinality_min_cut(graph):
             count += 1
-        elif len(karger_result) < get_cardinality_min_cut(small_graph):
+        elif len(karger_result) < get_cardinality_min_cut(graph):
             print("ERROR!")
+            print(f"{len(karger_result)=}")
+            print(f"{get_cardinality_min_cut(small_graph)=}")
             print(f"{min_partition=}")
             print(f"{graph.edges=}")
             print(f"{karger_result=}")
@@ -50,3 +52,6 @@ large_test_graph = random_connected_graph(1000)
 test_graph(small_graph, 10000)
 test_graph(medium_test_graph, 1000)
 test_graph(large_test_graph, 100)
+
+
+# TODO: the generated graphs almost always have minimum cuts of lengths (1, n-1)
