@@ -17,8 +17,7 @@ def get_edges_from_adj_matrix(adj):
     return edges
 
 def contract(edges, edge):
-    source = edge[0]
-    target = edge[1]
+    source, target = edge
     new_node_label = f"{source},{target}"
     edges = [edge for edge in edges if edge != (source, target)]
     edges = [edge for edge in edges if edge != (target, source)]
@@ -43,7 +42,7 @@ def _karger(edges):
     while number_of_nodes(edges) > 2:
         e = random.choice(edges)
         edges = contract(edges, e)
-    return list(edges)
+    return edges
 
 
 def karger_dict(adjacency_dictionary):
