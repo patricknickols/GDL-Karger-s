@@ -1,4 +1,4 @@
-from random import random
+import random
 from typing import Tuple
 
 import chex
@@ -34,6 +34,8 @@ def replace_edges(adj_matrix, i, j):
 
     adj_matrix[i, j] = 0
     adj_matrix[j, i] = 0
+    adj_matrix[i, i] = 0
+    adj_matrix[j, j] = 0
 
     return adj_matrix
 
@@ -43,7 +45,6 @@ def karger_gen(A: _Array, Seed: int) -> _Out:
     probes = probing.initialize(specs.SPECS['karger'])
 
     A_pos = np.arange(A.shape[0])
-    print(100)
     probing.push(
         probes,
         specs.Stage.INPUT,
@@ -54,6 +55,7 @@ def karger_gen(A: _Array, Seed: int) -> _Out:
             'seed': Seed
         })
     random.seed(Seed)
+    np.random.seed(Seed)
     group = np.arange(A.shape[0])
     graph_comp = np.copy(A)
     for s in range(A.shape[0] - 2):
@@ -77,11 +79,24 @@ def karger_gen(A: _Array, Seed: int) -> _Out:
 
     probing.push(probes, specs.Stage.OUTPUT, next_probe={'group': np.copy(group)})
     probing.finalize(probes)
+    print(f'{graph_comp=}')
+    print(f'{group=}')
     return group, probes
 
 
 if __name__ == '__main__':
     G = nx.Graph()
-    G.add_edges_from([(1, 2), (1, 3), (2, 3)])
+
+    # Add nodes 1 to 9
+    G.add_nodes_from(range(1, 10))
+
+    # Add edges for the complete graphs 1-5 and 6-9
+    complete_graph1 = [(i, j) for i in range(1, 6) for j in range(1, 6) if i != j]
+    complete_graph2 = [(i, j) for i in range(6, 10) for j in range(6, 10) if i != j]
+
+    G.add_edges_from(complete_graph1)
+    G.add_edges_from(complete_graph2)
+
+    # Add the edge between node 1 and 6
     print(nx.adjacency_matrix(G).toarray())
-    print(karger_gen(nx.adjacency_matrix(G).toarray() * 1.0, 42))
+    print(karger_gen(nx.adjacency_matrix(G).toarray() * 1.0, 1))
